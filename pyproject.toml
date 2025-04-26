@@ -1,6 +1,6 @@
 [project]
 name = "genskellie"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Dynamically generate skeletons for various languages."
 authors = [
     {name = "Alexander Brown", email = "alex.brown7711@gmail.com"},
@@ -14,6 +14,11 @@ license = {text = "MIT"}
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
+[project.scripts]
+genskellie = 'genskellie.__main__:run'
+
+[tool.setuptools.dynamic]
+version = {attr = 'src.genskellie.__meta__.__version__'}
 
 [tool.pdm]
 distribution = true
