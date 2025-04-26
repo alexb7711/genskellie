@@ -1,0 +1,19 @@
+[project]
+name = "genskellie"
+version = "0.1.0"
+description = "Dynamically generate skeletons for various languages."
+authors = [
+    {name = "Alexander Brown", email = "alex.brown7711@gmail.com"},
+]
+dependencies = []
+requires-python = ">=3.13"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
