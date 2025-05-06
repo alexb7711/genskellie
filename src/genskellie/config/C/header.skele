@@ -1,0 +1,51 @@
+///
+/// @file $FILE_PATH/${CLASS_NAME}.h
+///
+/// This file contains the ${CLASS_NAME} class $FILE_TYPE.
+///
+
+#ifndef ${HEADER_GUARD}
+#define ${HEADER_GUARD}
+
+${NAMESPACE_BEGIN}
+
+/// class description.
+class ${CLASS_NAME}
+{
+public:
+  /// Creates an object.
+  /// 
+  /// @return  Pointer to the object if successful; Otherwise nullptr
+  static ${CLASS_NAME}* create();
+
+  /// Destroy an object.
+  /// 
+  /// @param[in] p_obj   Pointer to object
+  static void destroy(${CLASS_NAME}*& p_obj);
+
+  /// Constructor.
+  ${CLASS_NAME}();
+
+  ///Destructor.
+  virtual ~${CLASS_NAME}();
+
+  /// Checks if the object has been initialized.
+  ///
+  /// @return true if the object is initialized.
+  bool is_initialized();
+
+private:
+  struct ${CLASS_NAME}_impl;    // Private struct
+  ${CLASS_NAME}_impl* mp_impl;  // Pointer to private struct
+
+  /// Disallow the copy constructor.
+  ${CLASS_NAME}(const ${CLASS_NAME}&) = delete;
+
+  /// Disallow the assignment operator.
+  ${CLASS_NAME}& operator=(const ${CLASS_NAME}&) = delete;
+};
+
+${NAMESPACE_END}
+
+#endif // ${HEADER_GUARD}
+
