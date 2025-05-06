@@ -156,7 +156,7 @@ def parse_options(args=None, values=None):
     """
 
     # Program description and use
-    usage = """%prog [options] [FILE PATH]"""
+    usage = """%(prog)s [options] [FILE PATH]"""
     desc = (
         "Generate file skeletons quickly, easily, and dynamically."
     )
