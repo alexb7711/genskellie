@@ -56,21 +56,32 @@ class Skellie:
 
     ##==========================================================================
     #
-    def __call__(self):
+    def __call__(self) -> bool:
+        """
+        @brief Run the genskellie program
+
+        @return
+        True if file was generated, false otherwise
+        """
         # If the language was not define, prompt for the language
         self.lang = self._prompt_item("language", self.out_f, self.cpath)
 
+        if not self.lang:
+            import sys
+            logger.error("Unable to identify the language!")
+            sys.exit(1)
+
         # If the file type was not define, prompt for the file to be generated
         self.cpath = self.cpath / self.lang
-        self.ft = self._prompt_item("file_type", self.ft, self.cpath)
+        self.ft = self.cpath / Path(self._prompt_item("file_type", self.ft, self.cpath)).with_suffix('.skel')
 
         # If a language or a file type was not select, exit early
         if not self.lang or not self.ft:
-            return
+            return False
 
         # Generate the file
         self._gen_file()
-        return
+        return True
 
     ##==========================================================================
     #
@@ -98,6 +109,11 @@ class Skellie:
                 if x[0] == selection.suffix:
                     logger.info(f'Language: {x[1]}')
                     selection = x[1]
+                    break
+
+            ## Determine if a selection was made
+            if selection not in found_items:
+                selection = None
         elif item == "file_type":
             ## Generate list of supported file types
             found_items = sorted([ x.stem for x in path.iterdir() if x.is_file() ])
@@ -155,9 +171,9 @@ class Skellie:
         """
         match self.lang.lower():
             case "python":
-                gen_python.run()
+                gen_python.run(self.out_f, self.ft)
             case "c":
-                gen_c.run()
+                gen_c.run(self.out_f, self.ft)
         return
 
 ################################################################################

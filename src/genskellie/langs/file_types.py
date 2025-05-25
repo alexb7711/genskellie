@@ -3,5 +3,7 @@ SUPPORTED_FILE_TYPES = [
         ('.py', 'Python'),
         # C
         ('.hpp', 'C'),
+        ('.h', 'C'),
         ('.cpp', 'C'),
+        ('.c', 'C'),
 ]

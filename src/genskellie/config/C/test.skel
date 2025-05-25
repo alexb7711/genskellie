@@ -1,0 +1,90 @@
+///
+///
+/// @file ${FILE_PATH}/${CLASS_NAME}.cpp
+///
+/// This file contains the ${CLASS_TESTED} class tests.
+///
+
+// this is a preprocessor test to ensure that the object cannot be included
+// twice.
+#include <${FILE_PATH}/${CLASS_TESTED}.h>
+
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+#include <${FILE_PATH}/${CLASS_TESTED}.h>
+
+using ::testing::_; // allow the "anything goes" character in GMock
+
+${NAMESPACE_BEGIN}
+
+${METHOD_SEPARATOR}
+TEST(${CLASS_INST_TEST}, Stack)
+{
+  // create on stack
+  // ${CLASS_TESTED} object;
+}
+
+${METHOD_SEPARATOR}
+TEST(${CLASS_INST_TEST}, Heap)
+{
+  // create in the heap
+  // ${CLASS_TESTED}* p_object = new ${CLASS_TESTED};
+  // ${CLASS_TESTED}* p_object = ${CLASS_TESTED}::create();
+  // ASSERT_TRUE(p_object != nullptr);
+  // delete p_object;
+}
+
+${METHOD_SEPARATOR}
+// The fixture for testing class ${CLASS_TESTED}.
+class ${CLASS_NAME} : public ::testing::Test
+{
+protected:
+  // You can remove any or all of the following functions if its body
+  // is empty.
+  ${CLASS_NAME}()
+  {
+    // You can do set-up work for each test here.
+  }
+  virtual ~${CLASS_NAME}()
+  {
+    // You can do clean-up work that doesn't throw exceptions here.
+  }
+
+  // If the constructor and destructor are not enough for setting up
+  // and cleaning up each test, you can define the following methods:
+  // This routine is called before running any tests, not before each test
+  static void SetUpTestCase()
+  {
+    // Google Mock will print errors only (least verbose).
+    // ::testing::FLAGS_gmock_verbose = "error";
+  }
+
+  // This routine is called after running all tests, not after each test
+  static void TearDownTestCase()
+  {
+  }
+
+  virtual void SetUp()
+  {
+    // Code here will be called immediately after the constructor (right
+    // before each test).
+  }
+
+  virtual void TearDown()
+  {
+    // Code here will be called immediately after each test (right
+    // before the destructor).
+  }
+
+  // Objects declared here can be used by all tests in the test case for ${CLASS_TESTED}.
+  ${CLASS_TESTED} ${CLASS_VAR};
+};
+
+${METHOD_SEPARATOR}
+TEST_F(${CLASS_NAME}, SomeTest)
+{
+  // Exercises a feature of ${CLASS_TESTED}.;
+}
+
+${NAMESPACE_END}
+

@@ -1,7 +1,7 @@
 ///
-/// @file $FILE_PATH/${CLASS_NAME}.h
+/// @file ${FILE_PATH}/${CLASS_NAME}.h
 ///
-/// This file contains the ${CLASS_NAME} class $FILE_TYPE.
+/// This file contains the ${CLASS_NAME} class ${FILE_TYPE}.
 ///
 
 #ifndef ${HEADER_GUARD}

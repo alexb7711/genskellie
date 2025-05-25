@@ -1,0 +1,26 @@
+///
+/// @file ${FILE_PATH}/${CLASS_NAME}.h
+///
+/// This file contains the ${CLASS_NAME} class ${FILE_TYPE}.
+///
+
+#ifndef $HEADER_GUARD
+#define $HEADER_GUARD
+
+${NAMESPACE_BEGIN}
+
+/// Interface class description.
+class ${CLASS_NAME}
+{
+public:
+  /// Object destructor.
+  virtual ~${CLASS_NAME}() {}
+
+  /// Method description
+  virtual method() = 0;
+};
+
+${NAMESPACE_END}
+
+#endif // $HEADER_GUARD
+
