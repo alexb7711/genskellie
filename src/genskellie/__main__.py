@@ -64,8 +64,7 @@ class Skellie:
         True if file was generated, false otherwise
         """
         # Prompt user for output file if one was not provided
-        if not self.out_f:
-            self.out_f = Path(input('File name: ')).absolute()
+        if not self.out_f: self.out_f = Path(input('File name: ')).absolute()
 
         # If the language was not define, prompt for the language
         self.lang = self._prompt_item("language", self.out_f, self.cpath)
