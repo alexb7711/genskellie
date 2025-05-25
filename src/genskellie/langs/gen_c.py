@@ -17,19 +17,32 @@ def run(out_f: Path, ft: str):
     with open(ft, 'r') as f:
         f_txt = f.read()
 
-    # Populate variables
-    _populate_header_impl_vars(out_f, f_txt)
-
     match ft.stem:
         case "header" | "implementation":
+            ## Update the extension
+            ext = None
+            if ft.stem == 'header': ext = '.h'
+            else: ext = '.cpp'
+
+            ## Populate variables
+            _populate_header_impl_vars(out_f.with_suffix(ext), f_txt)
+
+            ## Generate file
             _gen_header_implementation(ft, out_f, f_txt)
         case "interface":
+            ## Populate variables
+            _populate_header_impl_vars(out_f.with_suffix('.h'), f_txt)
+
+            ## Generate file
             _replace_txt(out_f.with_suffix('.h'), f_txt)
         case "test":
+            ## Populate variables
+            _populate_header_impl_vars(out_f.with_suffix('cpp'), f_txt)
+
             ## If the name is not formatted correctly
             if 'test_' not in str(out_f):
                 out_f = out_f.parent / Path('test_' + out_f.name).with_suffix('.cpp')
-
+            ## Generate file
             _replace_txt(out_f, f_txt)
         case _:
             return

@@ -13,7 +13,7 @@ logger = logging.getLogger(__file__)
 ################################################################################
 
 class Skellie:
-    from .langs.file_types import SUPPORTED_FILE_TYPES
+    from .langs.supported_languages import SUPPORTED_LANGUAGES
 
     ############################################################################
     # CONSTANTS
@@ -63,20 +63,20 @@ class Skellie:
         @return
         True if file was generated, false otherwise
         """
+        # Prompt user for output file if one was not provided
+        if not self.out_f:
+            self.out_f = Path(input('File name: ')).absolute()
+
         # If the language was not define, prompt for the language
         self.lang = self._prompt_item("language", self.out_f, self.cpath)
-
-        if not self.lang:
-            import sys
-            logger.error("Unable to identify the language!")
-            sys.exit(1)
 
         # If the file type was not define, prompt for the file to be generated
         self.cpath = self.cpath / self.lang
         self.ft = self.cpath / Path(self._prompt_item("file_type", self.ft, self.cpath)).with_suffix('.skel')
 
-        # If a language or a file type was not select, exit early
         if not self.lang or not self.ft:
+            import sys
+            logger.error("Unable to identify the language or file type!")
             return False
 
         # Generate the file
@@ -105,7 +105,7 @@ class Skellie:
             found_items = sorted([ x.name for x in path.iterdir() if x.is_dir() ])
 
             ## Try to identify the language
-            for x in self.SUPPORTED_FILE_TYPES:
+            for x in self.SUPPORTED_LANGUAGES:
                 if x[0] == selection.suffix:
                     logger.info(f'Language: {x[1]}')
                     selection = x[1]
@@ -219,7 +219,7 @@ def parse_options(args=None, values=None):
     )
     parser.add_argument(
         "output_file", nargs='?',
-        default='.',
+        default=None,
         help="File to output text into.",
     )
     parser.add_argument(

@@ -1,4 +1,4 @@
-SUPPORTED_FILE_TYPES = [
+SUPPORTED_LANGUAGES = [
         # Python
         ('.py', 'Python'),
         # C
