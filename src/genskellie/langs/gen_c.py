@@ -18,7 +18,7 @@ def run(out_f: Path, ft: str):
         f_txt = f.read()
 
     # Populate variables
-    _populate_header_impl_vars(out_f)
+    _populate_header_impl_vars(out_f, f_txt)
 
     match ft.stem:
         case "header" | "implementation":
@@ -75,21 +75,22 @@ def _gen_header_implementation(ft: str, out_f: Path, f_txt: str):
 ################################################################################
 ##==============================================================================
 #
-def _populate_header_impl_vars(out_f: Path):
+def _populate_header_impl_vars(out_f: Path, f_txt: str):
     """!
     @brief Populate the required variables for header/implementation files
 
     @param out_f Output file path
+    @param f_txt File text
     """
     global NAMESPACE
     global CLASS_NAME
     global HEADER_GUARD
     global FILE_PATH
 
-    if not NAMESPACE: NAMESPACE = input('Namespace [None]: ')
+    if not NAMESPACE and '${NAMESPACE_BEGIN}' in f_txt: NAMESPACE = input('Namespace [None]: ')
     if not NAMESPACE: NAMESPACE = 'IGNORE'
 
-    if not CLASS_NAME: CLASS_NAME = input(f'Class Name [{out_f.stem}]: ')
+    if not CLASS_NAME and '${CLASS_NAME}' in f_txt: CLASS_NAME = input(f'Class Name [{out_f.stem}]: ')
     if not CLASS_NAME or CLASS_NAME.isspace(): CLASS_NAME = out_f.stem
 
     HEADER_GUARD = out_f.stem.upper()
@@ -118,9 +119,10 @@ def _replace_txt(out_f: Path, f_txt: str):
 
     f_txt = f_txt.replace('${HEADER_GUARD}', HEADER_GUARD)
     f_txt = f_txt.replace('${CLASS_NAME}', CLASS_NAME)
-    ft_txt = f_txt.replace('${FILE_PATH}', FILE_PATH)
+    f_txt = f_txt.replace('${FILE_PATH}', FILE_PATH)
     f_txt = _method_separator(f_txt)
 
+    # Write text to disk
     with open(out_f, 'a') as f: f.write(f_txt)
     return f_txt
 

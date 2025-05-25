@@ -218,13 +218,13 @@ def parse_options(args=None, values=None):
         help="Select the type of file output.",
     )
     parser.add_argument(
-        "output_file", nargs=1,
+        "output_file", nargs='?',
         default='.',
         help="File to output text into.",
     )
     parser.add_argument(
-        "file_type", nargs=1,
-        default=None,
+        "file_type", nargs='?',
+        default="BOGUS_INPUT",
         help="Type of file to output.",
     )
 
