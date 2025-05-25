@@ -2,7 +2,7 @@ import logging
 import argparse
 import os
 import platform
-from logging import CRITICAL, DEBUG, WARNING
+from logging import CRITICAL, DEBUG, WARNING, INFO
 from pathlib import Path
 import warnings
 
@@ -13,6 +13,7 @@ logger = logging.getLogger(__file__)
 ################################################################################
 
 class Skellie:
+    from .langs.file_types import SUPPORTED_FILE_TYPES
 
     ############################################################################
     # CONSTANTS
@@ -35,7 +36,7 @@ class Skellie:
     def __init__(self,
                  std_output: bool = False,
                  config_path: Path = None,
-                 output_file_path = None,
+                 output_file = None,
                  language: str = None,
                  file_type: str = None):
         """!
@@ -43,12 +44,12 @@ class Skellie:
 
         @param std_output Output text to the console
         @param config_path Configuration directory path
-        @param output_file_path File to output the skeleton to
+        @param output_file File to output the skeleton to
         @param language Language type
         @param file_type Type of file to generate
         """
-        self.cpath = config_path if config_path != None else Skellie.DEFAULT_CONFIGURATION_PATH
-        self.out_f = output_file_path
+        self.cpath = Path(config_path) if config_path != None else Path(Skellie.DEFAULT_CONFIGURATION_PATH)
+        self.out_f = output_file
         self.lang = language
         self.ft = file_type
         return
@@ -57,7 +58,7 @@ class Skellie:
     #
     def __call__(self):
         # If the language was not define, prompt for the language
-        self.lang = self._prompt_item("language", self.lang, self.cpath)
+        self.lang = self._prompt_item("language", self.out_f, self.cpath)
 
         # If the file type was not define, prompt for the file to be generated
         self.cpath = self.cpath / self.lang
@@ -73,7 +74,7 @@ class Skellie:
 
     ##==========================================================================
     #
-    def _prompt_item(self,item: str, selection: str, path: Path) -> str:
+    def _prompt_item(self, item: str, selection, path: Path) -> str:
         """!
         @brief
         Either prompt a list of supported items if one was not provided
@@ -89,11 +90,25 @@ class Skellie:
         """
         # List the item and sort them
         if item == "language":
+            ## Generate list of supported languages
             found_items = sorted([ x.name for x in path.iterdir() if x.is_dir() ])
+
+            ## Try to identify the language
+            for x in self.SUPPORTED_FILE_TYPES:
+                if x[0] == selection.suffix:
+                    logger.info(f'Language: {x[1]}')
+                    selection = x[1]
         elif item == "file_type":
+            ## Generate list of supported file types
             found_items = sorted([ x.stem for x in path.iterdir() if x.is_file() ])
+            if selection in found_items:
+                    logger.info(f'File Type: {selection}')
+            else:
+                selection = None
         else:
             return None
+
+        # Attempt to automatically determine the item
 
         # If the item was not specified
         if not selection:
@@ -123,8 +138,8 @@ class Skellie:
                     print("Invalid entry...")
 
         # Otherwise check whether the item is in the list
-        elif item not in found_items:
-                selection = None
+        elif selection not in found_items:
+            selection = None
 
         return selection
 
@@ -156,7 +171,7 @@ def parse_options(args=None, values=None):
     """
 
     # Program description and use
-    usage = """%(prog)s [options] [FILE PATH]"""
+    usage = """%(prog)s [options] [FILE PATH] [FILE TYPE]"""
     desc = (
         "Generate file skeletons quickly, easily, and dynamically."
     )
@@ -187,18 +202,23 @@ def parse_options(args=None, values=None):
         help="Select the type of file output.",
     )
     parser.add_argument(
-        "-f", "--output_file",
-        dest="output_file_path",
-        default=None,
+        "output_file", nargs=1,
+        default='.',
         help="File to output text into.",
+    )
+    parser.add_argument(
+        "file_type", nargs=1,
+        default=None,
+        help="Type of file to output.",
     )
 
     # Parse the input arguments
     options = parser.parse_args(args, values)
 
     # Update the path to be a Path object
-    if options.output_file_path:
-        options.output_file_path = Path(options.output_file_path)
+    if options.output_file:
+        options.output_file = Path(str(options.output_file[0])).absolute()
+        options.file_type = options.file_type[0]
 
     # Save the options
     return vars(options)
@@ -218,7 +238,7 @@ def run():
         sys.exit(2)
 
     # Set the logging level
-    logger.setLevel(WARNING)
+    logger.setLevel(INFO)
     console_handler = logging.StreamHandler()
     logger.addHandler(console_handler)
 
