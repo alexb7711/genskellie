@@ -1,13 +1,16 @@
 from pathlib import Path
+from string import Template
 
-from genskellie.gen_util import prompt_y_n
+from genskellie.gen_util import *
 
 ##==============================================================================
 # PRIVATE VARIABLES
-CLASS_NAME = None
-HEADER_GUARD = None
-NAMESPACE = None
-FILE_PATH = None
+_CLASS_NAME = None
+_CLASS_TESTED = None
+_HEADER_GUARD = None
+_NAMESPACE = None
+_FILE_PATH = None
+_FILE_TYPE = 'definition'
 
 ##==============================================================================
 #
@@ -37,7 +40,7 @@ def run(out_f: Path, ft: str):
             _replace_txt(out_f.with_suffix('.h'), f_txt)
         case "test":
             ## Populate variables
-            _populate_header_impl_vars(out_f.with_suffix('cpp'), f_txt)
+            _populate_header_impl_vars(out_f.with_suffix('.cpp'), f_txt)
 
             ## If the name is not formatted correctly
             if 'test_' not in str(out_f):
@@ -78,9 +81,13 @@ def _gen_header_implementation(ft: str, out_f: Path, f_txt: str):
         bool_header = prompt_y_n("Generate header?")
 
     ## If the header is to be generated
-    if bool_header: _replace_txt(out_f.with_suffix('.h'), f_txt)
+    if bool_header:
+        _FILE_TYPE = 'implementation'
+        _replace_txt(out_f.with_suffix('.h'), f_txt)
     ## If the implementation is to be generated
-    if bool_implementation: _replace_txt(out_f.with_suffix('.cpp'), f_txt)
+    if bool_implementation:
+        _FILE_TYPE = 'definition'
+        _replace_txt(out_f.with_suffix('.cpp'), f_txt)
     return
 
 ################################################################################
@@ -95,19 +102,24 @@ def _populate_header_impl_vars(out_f: Path, f_txt: str):
     @param out_f Output file path
     @param f_txt File text
     """
-    global NAMESPACE
-    global CLASS_NAME
-    global HEADER_GUARD
-    global FILE_PATH
+    global _NAMESPACE
+    global _CLASS_NAME
+    global _CLASS_TESTED
+    global _HEADER_GUARD
+    global _FILE_PATH
+    global _FILE_TYPE
 
-    if not NAMESPACE and '${NAMESPACE_BEGIN}' in f_txt: NAMESPACE = input('Namespace [None]: ')
-    if not NAMESPACE: NAMESPACE = 'IGNORE'
+    if not _NAMESPACE and '${NAMESPACE_BEGIN}' in f_txt: _NAMESPACE = input('Namespace [None]: ')
+    if not _NAMESPACE: _NAMESPACE = 'IGNORE'
 
-    if not CLASS_NAME and '${CLASS_NAME}' in f_txt: CLASS_NAME = input(f'Class Name [{out_f.stem}]: ')
-    if not CLASS_NAME or CLASS_NAME.isspace(): CLASS_NAME = out_f.stem
+    if not _CLASS_NAME and '${CLASS_NAME}' in f_txt: _CLASS_NAME = input(f'Class Name [{out_f.stem}]: ')
+    if not _CLASS_NAME or _CLASS_NAME.isspace(): _CLASS_NAME = out_f.stem
 
-    HEADER_GUARD = out_f.stem.upper()
-    FILE_PATH = out_f.stem.upper()
+    if not _CLASS_TESTED and '${CLASS_TESTED}' in f_txt: _CLASS_TESTED = input(f'Class being tested: ')
+    if not _CLASS_TESTED or _CLASS_TESTED.isspace(): _CLASS_TESTED = out_f.stem
+
+    _HEADER_GUARD = out_f.stem.upper()
+    _FILE_PATH = out_f.stem.upper()
     return
 
 ##==============================================================================
@@ -122,34 +134,23 @@ def _replace_txt(out_f: Path, f_txt: str):
     Updated file text
     """
     # Remove namespace
-    if not NAMESPACE or NAMESPACE.isspace() or NAMESPACE == 'IGNORE':
+    if not _NAMESPACE or _NAMESPACE.isspace() or _NAMESPACE == 'IGNORE':
         f_txt = f_txt.replace('${NAMESPACE_BEGIN}\n\n', '')
         f_txt = f_txt.replace('${NAMESPACE_END}\n\n', '')
     # Include namespace
     else:
-        f_txt = f_txt.replace('${NAMESPACE_BEGIN}', f'NAMESPACE {NAMESPACE}\n{{')
+        f_txt = f_txt.replace('${NAMESPACE_BEGIN}', f'namespace {_NAMESPACE}\n{{')
         f_txt = f_txt.replace('${NAMESPACE_END}', '}')
 
-    f_txt = f_txt.replace('${HEADER_GUARD}', HEADER_GUARD)
-    f_txt = f_txt.replace('${CLASS_NAME}', CLASS_NAME)
-    f_txt = f_txt.replace('${FILE_PATH}', FILE_PATH)
-    f_txt = _method_separator(f_txt)
+    f_txt = Template(f_txt).substitute(
+            HEADER_GUARD=_HEADER_GUARD,
+            CLASS_NAME=_CLASS_NAME,
+            CLASS_TESTED=_CLASS_TESTED,
+            FILE_PATH=_FILE_PATH,
+            FILE_TYPE=_FILE_TYPE,
+            METHOD_SEPARATOR=method_separator(f_txt, indent=2)
+            )
 
     # Write text to disk
     with open(out_f, 'a') as f: f.write(f_txt)
     return f_txt
-
-##==============================================================================
-#
-def _method_separator(f_txt: str, separator='=', length=78) -> str:
-    """!
-    @brief Update the text separator comments.
-
-    @param f_txt
-    @param separator
-    @param length
-
-    @return
-    Updated text string with method separator.
-    """
-    return f_txt.replace('${METHOD_SEPARATOR}', '//'+(separator * length))

@@ -18,9 +18,8 @@ class Skellie:
     ############################################################################
     # CONSTANTS
     ############################################################################
-    DEFAULT_CONFIGURATION_PATH = Path(os.path.dirname(os.path.abspath(__file__))) / Path(
-        "config/"
-    )
+    DEFAULT_CONFIGURATION_PATH = \
+            Path(os.path.dirname(os.path.abspath(__file__))) / Path("config/")
 
     # Select configuration directory location based on the operating system
     PROGRAM = "genkellie"
@@ -218,12 +217,12 @@ def parse_options(args=None, values=None):
     )
     parser.add_argument(
         "output_file", nargs='?',
-        default=None,
+        const=None, type=str,
         help="File to output text into.",
     )
     parser.add_argument(
         "file_type", nargs='?',
-        default="BOGUS_INPUT",
+        const="BOGUS_INPUT", type=str,
         help="Type of file to output.",
     )
 
@@ -232,8 +231,8 @@ def parse_options(args=None, values=None):
 
     # Update the path to be a Path object
     if options.output_file:
-        options.output_file = Path(str(options.output_file[0])).absolute()
-        options.file_type = options.file_type[0]
+        options.output_file = Path(str(options.output_file)).absolute()
+        options.file_type = options.file_type
 
     # Save the options
     return vars(options)

@@ -12,3 +12,27 @@ def prompt_y_n(question: str) -> bool:
     response = input(question + ' (Y/N): ')
     if not response or response.isspace(): response = False
     return True if response == 'y' else False
+
+##==============================================================================
+#
+def method_separator(f_txt: str,
+                     indent_lvl: int  = 0,
+                     indent: int = 4,
+                     comment: str = '//',
+                     separator: str = '=',
+                     width: int = 80) -> str:
+    """!
+    @brief Update the text separator comments.
+
+    @param f_txt
+    @param indent_lvl
+    @param indent
+    @param comment
+    @param separator
+    @param width
+
+    @return
+    Separator comment.
+    """
+    length = width - (indent_lvl * indent) - len(comment)
+    return comment + (separator * length)

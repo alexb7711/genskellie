@@ -1,0 +1,13 @@
+"""!
+@file ${FILE_PATH}/${MODULE}.py
+
+@package
+"""
+
+${1}
+# PUBLIC
+${1}
+
+${1}
+# PRIVATE
+${1}

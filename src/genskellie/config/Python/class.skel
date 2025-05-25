@@ -1,0 +1,27 @@
+class ${CLASS_NAME}:
+    """!
+    """
+    ${SECTION_SEPARATOR}
+    # CONSTANTS
+    ${SECTION_SEPARATOR}
+
+    ${SECTION_SEPARATOR}
+    # PUBLIC
+    ${SECTION_SEPARATOR}
+
+    ${METHOD_SEPARATOR}
+    def __init__(self):
+        """!
+        """
+        return
+
+    ${METHOD_SEPARATOR}
+    def __call__(self):
+        """!
+        """
+        return
+
+    ${SECTION_SEPARATOR}
+    # PRIVATE
+    ${SECTION_SEPARATOR}
+
