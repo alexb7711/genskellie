@@ -122,8 +122,6 @@ class Skellie:
         else:
             return None
 
-        # Attempt to automatically determine the item
-
         # If the item was not specified
         if not selection:
             ## Print out the found items
