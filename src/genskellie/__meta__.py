@@ -36,5 +36,5 @@ def _get_version(version_info):
 # Global Variables
 ########################################################################################################################
 
-__version_info__ = (0, 0, 0, "dev", 0)
+__version_info__ = (1, 0, 0, "alpha", 0)
 __version__ = _get_version(__version_info__)
