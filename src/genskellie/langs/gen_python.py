@@ -16,15 +16,12 @@ def run(out_f: Path, ft: str):
     with open(ft, 'r') as f:
         f_txt = f.read()
 
-    match ft.stem:
-        case 'class' | 'enum' | 'module' | 'script':
-            ## Populate variables
-            _populate_header_impl_vars(out_f.with_suffix('.py'), f_txt)
+    # Populate variables
+    _populate_header_impl_vars(out_f.with_suffix('.py'), f_txt)
 
-            ## Generate file
-            _replace_txt(out_f.with_suffix('.py'), f_txt)
-        case 'def':
-            pass
+    # Generate file
+    _replace_txt(out_f.with_suffix('.py'), f_txt)
+    return
 
 ################################################################################
 # GENERATION FUNCTIONS

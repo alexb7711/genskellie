@@ -1,0 +1,3 @@
+${METHOD_SEPARATOR}
+def ${METHOD_NAME}():
+    return

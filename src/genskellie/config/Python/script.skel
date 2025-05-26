@@ -1,0 +1,34 @@
+"""!
+@file ${FILE_PATH}/${MODULE}.py
+
+@package
+"""
+
+import argparse
+import sys
+import logging
+from pathlib import Path
+
+${SECTION_SEPARATOR}
+
+${METHOD_SEPARATOR}
+def main():
+    # Program description and use
+    usage = """%(prog)s [options] [FILE PATH] [FILE TYPE]"""
+    desc = ""
+    # Optional flags
+    parser = argparse.ArgumentParser(prog="[PROGRAM]", usage=usage, description=desc)
+    parser.add_argument(
+        "-s", "--std",
+        dest="std_output",
+        default=False,
+        help="Print the output to the terminal.",
+    )
+    return
+
+${SECTION_SEPARATOR}
+
+${METHOD_SEPARATOR}
+if __name__ == "__main__":
+    main()
+    return

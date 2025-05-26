@@ -125,8 +125,7 @@ class Skellie:
         # If the item was not specified
         if not selection:
             ## Print out the found items
-            for i, x in enumerate(found_items):
-                print(f"{i}: {x}")
+            for i, x in enumerate(found_items): print(f"{i}: {x}")
 
             ## Prompt for the selection of the item
             while True:

@@ -48,6 +48,11 @@ def run(out_f: Path, ft: str):
             ## Generate file
             _replace_txt(out_f, f_txt)
         case _:
+            ## Populate variables
+            _populate_header_impl_vars(out_f, f_txt)
+
+            ## Generate file
+            _replace_txt(out_f, f_txt)
             return
 
     return
