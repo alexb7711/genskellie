@@ -49,7 +49,7 @@ update: ## Re-install genskellie
 #
 .ONESHELL:
 test: setup ## Run unit tests
-	source "$(BIN)/activate"
+	. "$(BIN)/activate"
 	$(PYTHON) -m unittest discover -s $(TST_D) -p "test_*.py"
 	coverage run --source=. -m unittest discover -s $(TST_D) -p "test_*.py"
 	coverage report
@@ -59,7 +59,7 @@ test: setup ## Run unit tests
 .ONESHELL:
 setup: ## Set up the project
 	@$(PYTHON) -m venv $(ENV_DIR)
-	@source "$(BIN)/activate"
+	@. "$(BIN)/activate"
 	@pip install --upgrade pip
 	@pip install .[test]
 
@@ -67,7 +67,7 @@ setup: ## Set up the project
 #
 .ONESHELL:
 update-venv: ## Update the virtual environment packages
-	@source "$(BIN)/activate"
+	@. "$(BIN)/activate"
 	@pip install --upgrade pip
 	@pip install .
 
@@ -76,7 +76,7 @@ update-venv: ## Update the virtual environment packages
 .ONESHELL:
 run: ## Execute the program
 	@make setup
-	@source "$(BIN)/activate"
+	@. "$(BIN)/activate"
 	@$(PYTHON) src/genskellie
 
 ##==============================================================================
@@ -89,7 +89,7 @@ doc: upgrade ## Generate documentation
 ##==============================================================================
 #
 debug: ## Enable the debugger (requires `pudb`)
-	@source $(BIN)/activate  && \
+	@. $(BIN)/activate  && \
 	cd $(SRC_D)              && \
 	python -m pudb main.py
 

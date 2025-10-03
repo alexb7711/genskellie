@@ -27,9 +27,6 @@ def run(out_f: Path, ft: str):
             if ft.stem == 'header': ext = '.h'
             else: ext = '.cpp'
 
-            ## Populate variables
-            _populate_header_impl_vars(out_f.with_suffix(ext), f_txt)
-
             ## Generate file
             _gen_header_implementation(ft, out_f, f_txt)
         case "interface":
@@ -87,11 +84,16 @@ def _gen_header_implementation(ft: str, out_f: Path, f_txt: str):
 
     ## If the header is to be generated
     if bool_header:
+        ### Populate variables
         _FILE_TYPE = 'implementation'
+        _populate_header_impl_vars(out_f.with_suffix(ext), f_txt)
+
         _replace_txt(out_f.with_suffix('.h'), f_txt)
     ## If the implementation is to be generated
     if bool_implementation:
+        ### Populate variables
         _FILE_TYPE = 'definition'
+        _populate_header_impl_vars(out_f.with_suffix(ext), f_txt)
         _replace_txt(out_f.with_suffix('.cpp'), f_txt)
     return
 
