@@ -124,8 +124,8 @@ def _populate_header_impl_vars(out_f: Path, f_txt: str):
     if not _CLASS_TESTED and '${CLASS_TESTED}' in f_txt: _CLASS_TESTED = input(f'Class being tested: ')
     if not _CLASS_TESTED or _CLASS_TESTED.isspace(): _CLASS_TESTED = out_f.stem
 
-    _HEADER_GUARD = out_f.stem.upper()
-    _FILE_PATH = out_f.stem.upper()
+    _HEADER_GUARD = "_" + out_f.stem.upper() + "_H_"
+    _FILE_PATH = out_f.stem.lower()
     return
 
 ##==============================================================================

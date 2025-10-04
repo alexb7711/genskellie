@@ -9,7 +9,7 @@ def prompt_y_n(question: str) -> bool:
 
     @returns True if user responds (Y/y) or False if user response (N/n).
     """
-    response = input(question + ' (Y/N): ')
+    response = input(question + ' (Y/N): ').lower()
     if not response or response.isspace(): response = False
     return True if response == 'y' else False
 
