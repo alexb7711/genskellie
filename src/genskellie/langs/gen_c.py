@@ -16,9 +16,7 @@ _FILE_TYPE = 'definition'
 #
 def run(out_f: Path, ft: str):
     # Get file text
-    f_txt = None
-    with open(ft, 'r') as f:
-        f_txt = f.read()
+    f_txt = _get_file_text(ft)
 
     match ft.stem:
         case "header" | "implementation":
@@ -27,8 +25,11 @@ def run(out_f: Path, ft: str):
             if ft.stem == 'header': ext = '.h'
             else: ext = '.cpp'
 
+            ## Populate the variables
+            _populate_header_impl_vars(out_f.with_suffix(ext), f_txt)
+
             ## Generate file
-            _gen_header_implementation(ft, out_f, f_txt)
+            _gen_header_implementation(ft, out_f)
         case "interface":
             ## Populate variables
             _populate_header_impl_vars(out_f.with_suffix('.h'), f_txt)
@@ -60,14 +61,13 @@ def run(out_f: Path, ft: str):
 
 ##==============================================================================
 #
-def _gen_header_implementation(ft: str, out_f: Path, f_txt: str):
+def _gen_header_implementation(ft: str, out_f: Path):
     """!
     @brief Logic to determine whether to generate header and/or implementation
     files.
 
-    @param ft
-    @param out_f
-    @param f_txt
+    @param ft Path to filetype
+    @param out_f Output file path
     """
     ## Default to generate files
     bool_header = True if ft.stem == 'header' else False
@@ -84,16 +84,15 @@ def _gen_header_implementation(ft: str, out_f: Path, f_txt: str):
 
     ## If the header is to be generated
     if bool_header:
-        ### Populate variables
-        _FILE_TYPE = 'implementation'
-        _populate_header_impl_vars(out_f.with_suffix(ext), f_txt)
-
+        _FILE_TYPE = 'definition'
+        ft = Path(ft).parent / 'header.skel'
+        f_txt = _get_file_text(ft)
         _replace_txt(out_f.with_suffix('.h'), f_txt)
     ## If the implementation is to be generated
     if bool_implementation:
-        ### Populate variables
-        _FILE_TYPE = 'definition'
-        _populate_header_impl_vars(out_f.with_suffix(ext), f_txt)
+        _FILE_TYPE = 'implementation'
+        ft = Path(ft).parent / 'implementation.skel'
+        f_txt = _get_file_text(ft)
         _replace_txt(out_f.with_suffix('.cpp'), f_txt)
     return
 
@@ -161,3 +160,9 @@ def _replace_txt(out_f: Path, f_txt: str):
     # Write text to disk
     with open(out_f, 'a') as f: f.write(f_txt)
     return f_txt
+
+##==============================================================================
+#
+def _get_file_text(ft: str):
+    with open(ft, 'r') as f:
+        return f.read()
