@@ -18,38 +18,37 @@ BIN     = $(ENV_DIR)/bin
 endif
 PYTHON  = python
 
-##==============================================================================
-# Makefile configuration
-.PHONY: all setup install update run debug clean test help doc
-
 ################################################################################
 # Recipes
 ################################################################################
 
 ##==============================================================================
 #
-all: setup update run ## Default action
+.SILENT:
+.PHONY: all
+all: setup run ## Default action
 
 ##==============================================================================
 #
-install: ## Install genskellie locally
-	pip install --user --break-system-packages -e .
+.SILENT:
+.PHONY: install
+install: uv-check ## Install genskellie locally
+	uv tool install -e .
 
 ##==============================================================================
 #
-uninstall: ## Uninstall genskellie
-	pip uninstall --break-system-packages genskellie
-
-##==============================================================================
-#
-update: ## Re-install genskellie
-	pip install --user --upgrade --break-system-packages .
+.SILENT:
+.PHONY: uninstall
+uninstall: uv-check ## Uninstall genskellie
+	uv tool uninstall genskellie
 
 ##==============================================================================
 #
 .ONESHELL:
+.SILENT:
+.PHONY: setup
 test: setup ## Run unit tests
-	source "$(BIN)/activate"
+	. "$(BIN)/activate"
 	$(PYTHON) -m unittest discover -s $(TST_D) -p "test_*.py"
 	coverage run --source=. -m unittest discover -s $(TST_D) -p "test_*.py"
 	coverage report
@@ -57,50 +56,52 @@ test: setup ## Run unit tests
 ##==============================================================================
 #
 .ONESHELL:
-setup: ## Set up the project
-	@$(PYTHON) -m venv $(ENV_DIR)
-	@source "$(BIN)/activate"
-	@pip install --upgrade pip
-	@pip install .[test]
+.SILENT:
+.PHONY: setup
+setup: uv-check ## Set up the project
+	uv sync
 
 ##==============================================================================
 #
 .ONESHELL:
-update-venv: ## Update the virtual environment packages
-	@source "$(BIN)/activate"
-	@pip install --upgrade pip
-	@pip install .
+.SILENT:
+.PHONY: run
+run: uv-check ## Execute the program
+	uv run src/genskellie
 
 ##==============================================================================
 #
 .ONESHELL:
-run: ## Execute the program
-	@make setup
-	@source "$(BIN)/activate"
-	@$(PYTHON) src/genskellie
-
-##==============================================================================
-#
-.ONESHELL:
+.SILENT:
+.PHONY: doc
 doc: upgrade ## Generate documentation
 	#@doxygen Doxyfile
 	genskellie -f -i ./docs -o ./html
 
 ##==============================================================================
 #
-debug: ## Enable the debugger (requires `pudb`)
-	@source $(BIN)/activate  && \
-	cd $(SRC_D)              && \
-	python -m pudb main.py
-
-##==============================================================================
-#
+.SILENT:
+.PHONY: clean
 clean: ## Cleanup the project
 	rm -rfv $(ENV_DIR)
 
 ##==============================================================================
+#
+.SILENT:
+.PHONY: uv-check
+uv-check: ## Ensure `uv` is installed
+	 if ! command -v uv 
+	 then
+		 echo "*** 'uv' is not installed" 
+		 exit 1
+	 fi
+
+##==============================================================================
 # https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+.ONESHELL:
+.SILENT:
+.PHONY: clean
 help:  ## Auto-generated help menu
-	@grep -P '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-	sort                                                | \
+	grep -P '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+	sort                                               | \
 	awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'

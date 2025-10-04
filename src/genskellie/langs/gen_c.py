@@ -16,9 +16,7 @@ _FILE_TYPE = 'definition'
 #
 def run(out_f: Path, ft: str):
     # Get file text
-    f_txt = None
-    with open(ft, 'r') as f:
-        f_txt = f.read()
+    f_txt = _get_file_text(ft)
 
     match ft.stem:
         case "header" | "implementation":
@@ -27,11 +25,11 @@ def run(out_f: Path, ft: str):
             if ft.stem == 'header': ext = '.h'
             else: ext = '.cpp'
 
-            ## Populate variables
+            ## Populate the variables
             _populate_header_impl_vars(out_f.with_suffix(ext), f_txt)
 
             ## Generate file
-            _gen_header_implementation(ft, out_f, f_txt)
+            _gen_header_implementation(ft, out_f)
         case "interface":
             ## Populate variables
             _populate_header_impl_vars(out_f.with_suffix('.h'), f_txt)
@@ -63,14 +61,13 @@ def run(out_f: Path, ft: str):
 
 ##==============================================================================
 #
-def _gen_header_implementation(ft: str, out_f: Path, f_txt: str):
+def _gen_header_implementation(ft: str, out_f: Path):
     """!
     @brief Logic to determine whether to generate header and/or implementation
     files.
 
-    @param ft
-    @param out_f
-    @param f_txt
+    @param ft Path to filetype
+    @param out_f Output file path
     """
     ## Default to generate files
     bool_header = True if ft.stem == 'header' else False
@@ -87,11 +84,15 @@ def _gen_header_implementation(ft: str, out_f: Path, f_txt: str):
 
     ## If the header is to be generated
     if bool_header:
-        _FILE_TYPE = 'implementation'
+        _FILE_TYPE = 'definition'
+        ft = Path(ft).parent / 'header.skel'
+        f_txt = _get_file_text(ft)
         _replace_txt(out_f.with_suffix('.h'), f_txt)
     ## If the implementation is to be generated
     if bool_implementation:
-        _FILE_TYPE = 'definition'
+        _FILE_TYPE = 'implementation'
+        ft = Path(ft).parent / 'implementation.skel'
+        f_txt = _get_file_text(ft)
         _replace_txt(out_f.with_suffix('.cpp'), f_txt)
     return
 
@@ -123,8 +124,8 @@ def _populate_header_impl_vars(out_f: Path, f_txt: str):
     if not _CLASS_TESTED and '${CLASS_TESTED}' in f_txt: _CLASS_TESTED = input(f'Class being tested: ')
     if not _CLASS_TESTED or _CLASS_TESTED.isspace(): _CLASS_TESTED = out_f.stem
 
-    _HEADER_GUARD = out_f.stem.upper()
-    _FILE_PATH = out_f.stem.upper()
+    _HEADER_GUARD = "_" + out_f.stem.upper() + "_H_"
+    _FILE_PATH = out_f.stem.lower()
     return
 
 ##==============================================================================
@@ -159,3 +160,9 @@ def _replace_txt(out_f: Path, f_txt: str):
     # Write text to disk
     with open(out_f, 'a') as f: f.write(f_txt)
     return f_txt
+
+##==============================================================================
+#
+def _get_file_text(ft: str):
+    with open(ft, 'r') as f:
+        return f.read()
